@@ -13,6 +13,45 @@ const {
   KAKAO_CLIENT_SECRET,
 } = process.env;
 
+app.post('/auth/naver', async (req, res) => {
+  const { code, state } = req.body;
+
+  try {
+    console.log(1, );
+    const tokenRes = await axios.post('https://nid.naver.com/oauth2.0/token', null, {
+      params: {
+        grant_type: 'authorization_code',
+        client_id: process.env.NAVER_CLIENT_ID,
+        client_secret: process.env.NAVER_CLIENT_SECRET,
+        code,
+        state,
+      },
+    });
+
+    console.log('tokenRes', tokenRes);
+    const { access_token } = tokenRes.data;
+
+    console.log('tokenRes.data', tokenRes.data);
+    console.log('access_token', access_token);
+    // 유저 정보 조회
+    const userRes = await axios.get('https://openapi.naver.com/v1/nid/me', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
+    console.log('userRes', userRes);
+
+    res.json({
+      access_token,
+      user: userRes.data.response,
+    });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    res.status(500).json({ error: 'ㅅㅂ' });
+  }
+});
+
+
 app.post('/auth/kakao', async (req, res) => {
   const { code } = req.body;
 
