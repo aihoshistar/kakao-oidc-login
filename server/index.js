@@ -69,16 +69,27 @@ app.post('/auth/kakao', async (req, res) => {
       },
     });
 
-    const { id_token, access_token } = tokenRes.data;
+    const { access_token } = tokenRes.data;
 
-    // id_token
-    const [header, payload, signature] = id_token.split('.');
-    const decoded = JSON.parse(Buffer.from(payload, 'base64').toString());
+    const {data} = await axios.get('https://kapi.kakao.com/v2/user/me', {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
 
+    console.log("data", data)
+
+    const response = {
+      id: data.id,
+      email: data.kakao_account.email,
+      name: data.kakao_account?.nickname || '',
+      image: data.kakao_account?.profile?.profile_image_url || data.kakao_account?.profile?.thumbnail_image_url || null
+    }
     res.json({
-      id_token,
-      access_token,
-      user: decoded,
+      user: {
+        response: data,
+        ...response
+      },
     });
   } catch (err) {
     console.error(err.response?.data || err.message);
