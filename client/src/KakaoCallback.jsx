@@ -8,7 +8,7 @@ export default function KakaoCallback() {
 
   useEffect(() => {
     if (code) {
-      fetch('http://localhost:4000/auth/kakao', {
+      fetch('http://localhost:31545/auth/kakao', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),

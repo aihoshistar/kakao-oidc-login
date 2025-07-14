@@ -87,6 +87,6 @@ app.post('/auth/kakao', async (req, res) => {
 });
 
 app.listen(4000, () => {
-  console.log('http://localhost:4000');
+  console.log('http://localhost:31545');
 });
 
